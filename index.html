@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Arbitrage Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Crypto Arbitrage Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Bots</a></li>
+                    <li><a href="#">Settings</a></li>
+                    <li><a href="#">Log Out</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="summary">
+            <h2>Account Summary</h2>
+            <div class="card">
+                <div class="card-item">
+                    <h3>Current Balance</h3>
+                    <p id="current-balance">$0.00</p>
+                </div>
+                <div class="card-item">
+                    <h3>Total Profit</h3>
+                    <p id="total-profit">$0.00</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="active-bots">
+            <h2>Active Bots</h2>
+            <div class="bot-list">
+                <div class="bot-card">
+                    <h3>Ethereum Bot 1</h3>
+                    <p>Status: <span class="status active">Active</span></p>
+                    <p>Profit: <span class="profit">$0.00</span></p>
+                </div>
+                <div class="bot-card">
+                    <h3>Ethereum Bot 2</h3>
+                    <p>Status: <span class="status active">Active</span></p>
+                    <p>Profit: <span class="profit">$0.00</span></p>
+                </div>
+                <div class="bot-card">
+                    <h3>Bitcoin Bot 1</h3>
+                    <p>Status: <span class="status active">Active</span></p>
+                    <p>Profit: <span class="profit">$0.00</span></p>
+                </div>
+                <div class="bot-card">
+                    <h3>Solana Bot 1</h3>
+                    <p>Status: <span class="status active">Active</span></p>
+                    <p>Profit: <span class="profit">$0.00</span></p>
+                </div>
+                <!-- Add more bots as needed -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Crypto Arbitrage. All rights reserved.</p>
+    </footer>
+</body>
+</html>
