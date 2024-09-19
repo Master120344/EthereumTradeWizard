@@ -13,6 +13,7 @@
             background-color: #f4f4f4;
             color: #333;
             margin: 0;
+            line-height: 1.6;
         }
 
         header {
@@ -20,6 +21,7 @@
             color: #fff;
             padding: 20px 0;
             text-align: center;
+            position: relative;
         }
 
         nav ul {
@@ -37,6 +39,11 @@
             color: #fff;
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ddd;
         }
 
         .container {
@@ -46,8 +53,13 @@
             padding: 20px;
         }
 
-        .summary, .active-bots {
+        .summary, .active-bots, .trading-history {
             margin: 20px 0;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
         }
 
         .card {
@@ -77,6 +89,11 @@
             margin: 10px;
             width: calc(30% - 20px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .bot-card:hover {
+            transform: scale(1.05);
         }
 
         .status {
@@ -85,6 +102,10 @@
 
         .status.active {
             color: green;
+        }
+
+        .status.inactive {
+            color: red;
         }
 
         .loading {
@@ -113,6 +134,27 @@
             padding: 15px 0;
             background: #333;
             color: #fff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .trading-history {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .trade-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .trade-row:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -141,6 +183,10 @@
                     <h3>Total Profit</h3>
                     <p id="total-profit">$0.00</p>
                 </div>
+                <div class="card-item">
+                    <h3>Total Trades</h3>
+                    <p id="total-trades">0</p>
+                </div>
             </div>
         </section>
 
@@ -148,6 +194,24 @@
             <h2>Active Bots</h2>
             <div class="bot-list" id="bot-list">
                 <!-- Bot cards will be dynamically generated here -->
+            </div>
+        </section>
+
+        <section class="trading-history">
+            <h2>Trading History</h2>
+            <div id="trade-history">
+                <div class="trade-row">
+                    <div>Trade #1</div>
+                    <div>$100.00</div>
+                </div>
+                <div class="trade-row">
+                    <div>Trade #2</div>
+                    <div>$150.00</div>
+                </div>
+                <div class="trade-row">
+                    <div>Trade #3</div>
+                    <div>$200.00</div>
+                </div>
             </div>
         </section>
 
@@ -169,10 +233,11 @@
                         resolve({
                             currentBalance: 12345.67,
                             totalProfit: 890.12,
+                            totalTrades: 15,
                             bots: [
                                 { name: "Ethereum Bot 1", profit: 200.00, status: "Active" },
                                 { name: "Ethereum Bot 2", profit: 150.00, status: "Active" },
-                                { name: "Bitcoin Bot 1", profit: 300.00, status: "Active" },
+                                { name: "Bitcoin Bot 1", profit: 300.00, status: "Inactive" },
                                 { name: "Solana Bot 1", profit: 240.00, status: "Active" },
                             ]
                         });
@@ -188,9 +253,10 @@
 
                 loading.style.display = "none"; // Hide loading spinner
 
-                // Update balance and profit
+                // Update balance, profit, and total trades
                 document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
                 document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
+                document.getElementById("total-trades").innerText = data.totalTrades;
 
                 // Update bot information
                 const botList = document.getElementById("bot-list");
