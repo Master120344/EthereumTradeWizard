@@ -1,5 +1,3 @@
-# data_storage.py
-
 import sqlite3
 import pandas as pd
 import logging
@@ -9,17 +7,27 @@ from config import LOGGING_SETTINGS
 # Setup logging
 logging.basicConfig(
     filename=LOGGING_SETTINGS['log_file'],
-    level=logging.DEBUG,
+    level=getattr(logging, LOGGING_SETTINGS['log_level']),
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
 class DataStorage:
     """Manages data storage for trade and price data."""
-
+    
     def __init__(self, db_name: str):
         self.db_name = db_name
-        self.connection = sqlite3.connect(self.db_name)
-        self.create_tables()
+        self.connection = None
+        self.connect()
+
+    def connect(self) -> None:
+        """Establish a connection to the SQLite database."""
+        try:
+            self.connection = sqlite3.connect(self.db_name)
+            self.create_tables()
+            logging.info(f"Connected to database {self.db_name}")
+        except sqlite3.Error as e:
+            logging.error(f"Failed to connect to database {self.db_name}: {e}")
+            raise
 
     def create_tables(self) -> None:
         """Create tables for storing trade and price data."""
@@ -85,24 +93,30 @@ class DataStorage:
 
     def close(self) -> None:
         """Close the database connection."""
-        self.connection.close()
-        logging.info(f"Database connection to {self.db_name} closed.")
+        if self.connection:
+            self.connection.close()
+            logging.info(f"Database connection to {self.db_name} closed.")
 
 def main():
     """Example usage of DataStorage."""
-    storage = DataStorage('trading_data.db')
-    storage.store_trade('binance', 'ETH/USD', 0.01, 2000, 'BUY')
-    storage.store_price('binance', 'ETH/USD', 2000)
+    try:
+        storage = DataStorage('trading_data.db')
+        storage.store_trade('binance', 'ETH/USD', 0.01, 2000, 'BUY')
+        storage.store_price('binance', 'ETH/USD', 2000)
+        
+        trades = storage.fetch_trades()
+        prices = storage.fetch_prices()
+        
+        print("Trades:")
+        print(trades)
+        print("Prices:")
+        print(prices)
     
-    trades = storage.fetch_trades()
-    prices = storage.fetch_prices()
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
     
-    print("Trades:")
-    print(trades)
-    print("Prices:")
-    print(prices)
-    
-    storage.close()
+    finally:
+        storage.close()
 
 if __name__ == "__main__":
     main()
