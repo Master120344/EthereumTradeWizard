@@ -214,4 +214,10 @@ button:hover {
         flex-direction: column;
         align-items: center;
     }
+
+    /* Adjust button styles for mobile */
+    button {
+        width: 100%;
+        padding: 12px;
+    }
 }
