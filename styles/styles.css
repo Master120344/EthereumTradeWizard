@@ -1,4 +1,114 @@
-/* Base styles for the loading screen */
+/* Base styles for the body */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Header styles */
+header {
+    background: #4CAF50;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+}
+
+/* Navigation styles */
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ddd;
+}
+
+/* Container styles */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Section styles */
+.summary, .active-bots, .trading-history, .graph-section {
+    margin: 20px 0;
+}
+
+/* Heading styles */
+h2 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+/* Card styles */
+.card {
+    display: flex;
+    justify-content: space-around;
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card-item {
+    text-align: center;
+}
+
+/* Bot list styles */
+.bot-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Bot card styles */
+.bot-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    width: calc(30% - 20px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.bot-card:hover {
+    transform: scale(1.05);
+}
+
+/* Status styles */
+.status {
+    font-weight: bold;
+}
+
+.status.active {
+    color: green;
+}
+
+.status.inactive {
+    color: red;
+}
+
+/* Loading screen styles */
 .loading {
     display: flex;
     justify-content: center;
@@ -24,10 +134,60 @@
     100% { transform: rotate(360deg); }
 }
 
+/* Footer styles */
+footer {
+    text-align: center;
+    padding: 15px 0;
+    background: #333;
+    color: #fff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Trading history styles */
+.trading-history {
+    background: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Trade row styles */
+.trade-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.trade-row:last-child {
+    border-bottom: none;
+}
+
+/* Graph section styles */
+.graph-section {
+    text-align: center;
+}
+
+/* Canvas styles */
+canvas {
+    max-width: 100%;
+    height: 400px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .spinner {
         width: 40px;
         height: 40px;
+    }
+
+    .bot-card {
+        width: calc(45% - 20px);
+    }
+
+    canvas {
+        height: 300px;
     }
 }
