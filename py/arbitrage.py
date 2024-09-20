@@ -1,25 +1,24 @@
-# arbitrage.py
-
 import time
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from api import get_price, place_order, get_order_status, cancel_order
-from config import TRADING_PAIRS, ARBITRAGE_PARAMS, LOGGING_SETTINGS, EXCHANGE_API_KEYS, EXCHANGE_URLS
+from config import TRADING_PAIRS, ARBITRAGE_PARAMS, LOGGING_SETTINGS, EXCHANGE_API_KEYS, EXCHANGE_URLS, TIMING_SETTINGS
 
 # Setup logging
 logging.basicConfig(filename=LOGGING_SETTINGS['log_file'],
                     level=LOGGING_SETTINGS['log_level'].upper(),
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Detect arbitrage opportunities across exchanges
 def detect_arbitrage_opportunity(pair):
     opportunities = []
     exchanges = list(EXCHANGE_API_KEYS.keys())
-    
+
     for i in range(len(exchanges)):
         for j in range(i + 1, len(exchanges)):
             exchange1 = exchanges[i]
             exchange2 = exchanges[j]
-            
+
             price1 = get_price(exchange1, pair)
             price2 = get_price(exchange2, pair)
 
@@ -30,6 +29,7 @@ def detect_arbitrage_opportunity(pair):
             price1 = float(price1['price'])
             price2 = float(price2['price'])
 
+            # Detect opportunities
             if price1 > price2 * (1 + ARBITRAGE_PARAMS['price_difference_threshold']):
                 profit = price1 - price2
                 opportunities.append({
@@ -53,6 +53,7 @@ def detect_arbitrage_opportunity(pair):
 
     return opportunities
 
+# Execute arbitrage trade
 def execute_trade(opportunity):
     try:
         buy_exchange = opportunity['buy_exchange']
@@ -60,7 +61,7 @@ def execute_trade(opportunity):
         pair = opportunity['pair']
         buy_price = opportunity['buy_price']
         sell_price = opportunity['sell_price']
-        quantity = min(ARBITRAGE_PARAMS['trade_volume_limit'], 1)  # Adjust as needed
+        quantity = min(ARBITRAGE_PARAMS['trade_volume_limit'], 1)  # Can be improved to be dynamic
 
         # Place buy order
         buy_order = place_order(buy_exchange, pair, 'BUY', quantity, buy_price)
@@ -87,6 +88,7 @@ def execute_trade(opportunity):
         logging.error("Error executing trade: %s", e)
         return False
 
+# Check if the order is filled
 def wait_for_order_filled(exchange, order_id):
     retries = TIMING_SETTINGS['order_retry_limit']
     while retries > 0:
@@ -103,9 +105,10 @@ def wait_for_order_filled(exchange, order_id):
     logging.error("Order %s not filled after retries.", order_id)
     return False
 
+# Monitor arbitrage opportunities
 def monitor_arbitrage():
     while True:
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=ARBITRAGE_PARAMS['max_threads']) as executor:
             futures = []
             for pair_info in TRADING_PAIRS:
                 pair = pair_info['pair']
