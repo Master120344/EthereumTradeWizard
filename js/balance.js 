@@ -1,0 +1,98 @@
+const fs = require('fs');
+const path = require('path');
+
+// Path to the balances file
+const balancesFile = path.join(__dirname, 'balances.json');
+
+// Initialize balances if the file does not exist
+if (!fs.existsSync(balancesFile)) {
+    fs.writeFileSync(balancesFile, JSON.stringify({}));
+}
+
+// Function to read balances from file
+const readBalances = () => {
+    const data = fs.readFileSync(balancesFile);
+    return JSON.parse(data);
+};
+
+// Function to save balances to file
+const saveBalances = (balances) => {
+    fs.writeFileSync(balancesFile, JSON.stringify(balances, null, 2));
+};
+
+// Function to update balance based on trade results
+const updateBalance = (botName, profit) => {
+    const balances = readBalances();
+
+    if (!balances[botName]) {
+        balances[botName] = { balance: 0, totalProfit: 0 };
+    }
+
+    balances[botName].balance += profit;
+    balances[botName].totalProfit += profit;
+
+    saveBalances(balances);
+    console.log(`Updated balance for ${botName}:`, balances[botName]);
+};
+
+// Function to get the current balance of a bot
+const getBalance = (botName) => {
+    const balances = readBalances();
+    return balances[botName] ? balances[botName].balance : 0;
+};
+
+// Function to synchronize profits after each trade
+const syncProfitsWithTradingHistory = (botName, exchange) => {
+    const historyFile = path.join(__dirname, 'trading_history', `${botName.replace(/ /g, '_')}_${exchange}_trades.json`);
+    
+    if (fs.existsSync(historyFile)) {
+        const trades = JSON.parse(fs.readFileSync(historyFile));
+        const totalProfit = trades.reduce((acc, trade) => acc + trade.netProfit, 0);
+        updateBalance(botName, totalProfit);
+    }
+};
+
+// Example trade execution that updates balance
+const executeTradeAndSync = (botName, exchange, tradingPair, amount, price, side) => {
+    const tradeDetails = {
+        amount,
+        price,
+        side,
+        total: amount * price,
+        fee: calculateFee(amount * price),
+        timeExecuted: new Date().toISOString()
+    };
+
+    // Log the trade
+    logTrade(botName, exchange, tradingPair, tradeDetails);
+
+    // Update balance based on the side of the trade
+    const profit = (side === "sell") ? tradeDetails.total - tradeDetails.fee : 0; // Profit only from sell trades
+    updateBalance(botName, profit);
+};
+
+// Function to calculate fees (example: 0.1% of total trade value)
+const calculateFee = (total) => {
+    return total * 0.001; // 0.1% fee
+};
+
+// Example of executing trades and synchronizing balance
+const exampleTrades = [
+    { botName: "Ethereum Bot", exchange: "Binance", tradingPair: "ETH/USDT", amount: 1, price: 2000, side: "sell" },
+    { botName: "Solana Bot", exchange: "Kraken", tradingPair: "SOL/USDT", amount: 5, price: 50, side: "buy" },
+];
+
+exampleTrades.forEach(trade => {
+    executeTradeAndSync(trade.botName, trade.exchange, trade.tradingPair, trade.amount, trade.price, trade.side);
+});
+
+// Function to get the total profit for a bot
+const getTotalProfit = (botName) => {
+    const balances = readBalances();
+    return balances[botName] ? balances[botName].totalProfit : 0;
+};
+
+// Example of getting the balance and profit
+const botName = "Ethereum Bot";
+console.log(`Current balance for ${botName}:`, getBalance(botName));
+console.log(`Total profit for ${botName}:`, getTotalProfit(botName));
