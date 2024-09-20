@@ -1,76 +1,73 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById('botSetupForm');
-    const botSelect = document.getElementById('exchange');
-    const usedBotList = document.getElementById('used-bot-list');
-
+    const form = document.getElementById('bot-setup-form');
+    const botSections = document.getElementById('bot-sections');
+    const setupProgress = document.getElementById('setup-progress');
+    
+    const bots = [
+        "Ethereum Bot 1", "Ethereum Bot 2", "Bitcoin Bot 1", 
+        "Solana Bot 1", "Ethereum Bot 3", "Cardano Bot 1", 
+        "Polkadot Bot 1", "Litecoin Bot 1", "Dogecoin Bot 1", 
+        "Ripple Bot 1"
+    ];
+    const exchanges = ["Binance", "Coinbase", "Kraken", "Bitfinex", "Huobi", "Bittrex", "KuCoin", "Gemini", "Gate.io", "OKEx"];
+    
     const usedBots = new Set();
-
+    const usedExchanges = new Set();
+    
+    for (let i = 0; i < 10; i++) {
+        const section = document.createElement('div');
+        section.className = 'section';
+        section.innerHTML = `
+            <h3>Bot Setup ${i + 1}</h3>
+            <label for="bot-select-${i}">Select Bot:</label>
+            <select id="bot-select-${i}">
+                <option value="">Select a bot</option>
+                ${bots.map(bot => `<option value="${bot}">${bot}</option>`).join('')}
+            </select>
+            <label for="exchange-select-${i}">Select Exchange:</label>
+            <select id="exchange-select-${i}">
+                <option value="">Select an exchange</option>
+                ${exchanges.map(exchange => `<option value="${exchange}">${exchange}</option>`).join('')}
+            </select>
+            <label for="api-key-${i}">API Key:</label>
+            <input type="text" id="api-key-${i}" required>
+            <label for="wallet-address-${i}">Wallet Address:</label>
+            <input type="text" id="wallet-address-${i}" required>
+            <label for="receiving-wallet-${i}">Receiving Wallet Address:</label>
+            <input type="text" id="receiving-wallet-${i}" required>
+            <label for="deposit-address-${i}">Deposit Address:</label>
+            <input type="text" id="deposit-address-${i}" required>
+            <div class="status" id="status-${i}"></div>
+        `;
+        botSections.appendChild(section);
+    }
+    
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        let completed = 0;
 
-        const selectedBot = botSelect.value;
+        for (let i = 0; i < 10; i++) {
+            const botSelect = document.getElementById(`bot-select-${i}`);
+            const exchangeSelect = document.getElementById(`exchange-select-${i}`);
+            const apiKey = document.getElementById(`api-key-${i}`).value.trim();
+            const walletAddress = document.getElementById(`wallet-address-${i}`).value.trim();
+            const receivingWallet = document.getElementById(`receiving-wallet-${i}`).value.trim();
+            const depositAddress = document.getElementById(`deposit-address-${i}`).value.trim();
 
-        // Validation
-        if (!selectedBot || usedBots.has(selectedBot)) {
-            alert('Please select a valid bot that has not been used yet.');
-            return;
+            const selectedBot = botSelect.value;
+            const selectedExchange = exchangeSelect.value;
+
+            if (selectedBot && !usedBots.has(selectedBot) && selectedExchange) {
+                usedBots.add(selectedBot);
+                // Here you can add your setup processing logic
+                document.getElementById(`status-${i}`).innerText = `${selectedBot} setup successfully!`;
+                completed++;
+            } else {
+                document.getElementById(`status-${i}`).innerText = `Error: Invalid setup or bot already used.`;
+            }
         }
 
-        const exchange = form.elements['exchange'].value.trim();
-        const apiKey = form.elements['apiKey'].value.trim();
-        const walletAddress = form.elements['walletAddress'].value.trim();
-
-        if (!exchange || !apiKey || !walletAddress) {
-            alert('Please fill in all required fields.');
-            return;
-        }
-
-        // Optional fields check
-        const apiSecret = form.elements['apiSecret'] ? form.elements['apiSecret'].value.trim() : '';
-        const seedPhrase = form.elements['seedPhrase'] ? form.elements['seedPhrase'].value.trim() : '';
-
-        // Create a list item for the used bot
-        const listItem = document.createElement('li');
-        listItem.textContent = selectedBot;
-        usedBotList.appendChild(listItem);
-
-        // Process the setup (e.g., send data to server)
-        const setupData = {
-            botName: selectedBot,
-            exchange,
-            apiKey,
-            apiSecret: apiSecret || 'Not provided',
-            seedPhrase: seedPhrase || 'Not provided',
-            walletAddress
-        };
-
-        // Simulated setup process (replace with actual API call)
-        console.log('Setting up bot with the following details:', setupData);
-        
-        // Show success message
-        alert(`${selectedBot} has been set up successfully!`);
-
-        // Reset the form
+        setupProgress.innerText = `Setup Progress: ${completed} out of 10`;
         form.reset();
-
-        // Disable the selected bot
-        disableBotOption(selectedBot);
-    });
-
-    // Function to disable the selected bot option
-    function disableBotOption(botName) {
-        const option = Array.from(botSelect.options).find(opt => opt.value === botName);
-        if (option) {
-            option.disabled = true;
-            option.style.display = 'none'; // Hide the option
-        }
-    }
-
-    // Additional features for user feedback
-    botSelect.addEventListener('change', () => {
-        const selectedBot = botSelect.value;
-        if (usedBots.has(selectedBot)) {
-            alert(`${selectedBot} has already been selected.`);
-        }
     });
 });
