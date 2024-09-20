@@ -6,57 +6,137 @@
     <title>Bot Setup</title>
     <link rel="stylesheet" href="styles.css">
     <script src="setup.js" defer></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #4CAF50;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        .section {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Bot Setup</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="setup.html">Setup</a></li>
-            </ul>
-        </nav>
     </header>
 
-    <main class="container">
+    <div class="container">
+        <div id="setup-progress" class="status">Setup Progress: 0 out of 10</div>
         <form id="bot-setup-form">
-            <div id="setup-progress">Setup Progress: 0 out of 10</div>
-
-            <!-- Repeat this block for each bot setup (1 to 10) -->
-            ${Array.from({ length: 10 }, (_, i) => `
-                <div class="bot-setup-section">
-                    <label for="bot-select-${i}">Select Bot ${i + 1}</label>
-                    <select id="bot-select-${i}">
-                        <option value="">Select a Bot</option>
-                        <option value="Bot1">Bot 1</option>
-                        <option value="Bot2">Bot 2</option>
-                        <option value="Bot3">Bot 3</option>
-                        <option value="Bot4">Bot 4</option>
-                        <option value="Bot5">Bot 5</option>
-                        <option value="Bot6">Bot 6</option>
-                        <option value="Bot7">Bot 7</option>
-                        <option value="Bot8">Bot 8</option>
-                        <option value="Bot9">Bot 9</option>
-                        <option value="Bot10">Bot 10</option>
-                    </select>
-
-                    <label for="api-key-${i}">API Key</label>
-                    <input type="text" id="api-key-${i}" placeholder="Enter API Key">
-
-                    <label for="wallet-address-${i}">Wallet Address</label>
-                    <input type="text" id="wallet-address-${i}" placeholder="Enter Wallet Address">
-
-                    <label for="receiving-wallet-${i}">Receiving Wallet Address</label>
-                    <input type="text" id="receiving-wallet-${i}" placeholder="Enter Receiving Wallet Address">
-
-                    <label for="deposit-address-${i}">Deposit Address</label>
-                    <input type="text" id="deposit-address-${i}" placeholder="Enter Deposit Address">
-
-                    <button type="submit">Send</button>
-                    <div id="status-${i}"></div>
-                </div>
-            `).join('')}
+            <div id="bot-sections">
+                <!-- 10 bot setup sections will be generated here -->
+            </div>
+            <button type="submit">Save Setup</button>
         </form>
-    </main>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById('bot-setup-form');
+            const botSections = document.getElementById('bot-sections');
+            const setupProgress = document.getElementById('setup-progress');
+            
+            const bots = [
+                "Ethereum Bot 1", "Ethereum Bot 2", "Bitcoin Bot 1", 
+                "Solana Bot 1", "Ethereum Bot 3", "Cardano Bot 1", 
+                "Polkadot Bot 1", "Litecoin Bot 1", "Dogecoin Bot 1", 
+                "Ripple Bot 1"
+            ];
+            const exchanges = ["Binance", "Coinbase", "Kraken", "Bitfinex", "Huobi", "Bittrex", "KuCoin", "Gemini", "Gate.io", "OKEx"];
+            
+            const usedBots = new Set();
+            
+            for (let i = 0; i < 10; i++) {
+                const section = document.createElement('div');
+                section.className = 'section';
+                section.innerHTML = `
+                    <h3>Bot Setup ${i + 1}</h3>
+                    <label for="bot-select-${i}">Select Bot:</label>
+                    <select id="bot-select-${i}" required>
+                        <option value="">Select a bot</option>
+                        ${bots.map(bot => `<option value="${bot}">${bot}</option>`).join('')}
+                    </select>
+                    <label for="exchange-select-${i}">Select Exchange:</label>
+                    <select id="exchange-select-${i}" required>
+                        <option value="">Select an exchange</option>
+                        ${exchanges.map(exchange => `<option value="${exchange}">${exchange}</option>`).join('')}
+                    </select>
+                    <label for="api-key-${i}">API Key:</label>
+                    <input type="text" id="api-key-${i}" required>
+                    <label for="wallet-address-${i}">Wallet Address:</label>
+                    <input type="text" id="wallet-address-${i}" required>
+                    <label for="receiving-wallet-${i}">Receiving Wallet Address:</label>
+                    <input type="text" id="receiving-wallet-${i}" required>
+                    <label for="deposit-address-${i}">Deposit Address:</label>
+                    <input type="text" id="deposit-address-${i}" required>
+                    <div class="status" id="status-${i}"></div>
+                `;
+                botSections.appendChild(section);
+            }
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                let completed = 0;
+
+                for (let i = 0; i < 10; i++) {
+                    const botSelect = document.getElementById(`bot-select-${i}`);
+                    const exchangeSelect = document.getElementById(`exchange-select-${i}`);
+                    const apiKey = document.getElementById(`api-key-${i}`).value.trim();
+                    const walletAddress = document.getElementById(`wallet-address-${i}`).value.trim();
+                    const receivingWallet = document.getElementById(`receiving-wallet-${i}`).value.trim();
+                    const depositAddress = document.getElementById(`deposit-address-${i}`).value.trim();
+
+                    const selectedBot = botSelect.value;
+                    const selectedExchange = exchangeSelect.value;
+
+                    if (selectedBot && !usedBots.has(selectedBot) && selectedExchange) {
+                        usedBots.add(selectedBot);
+                        document.getElementById(`status-${i}`).innerText = `${selectedBot} setup successfully!`;
+                        completed++;
+                    } else {
+                        document.getElementById(`status-${i}`).innerText = `Error: Invalid setup or bot already used.`;
+                    }
+                }
+
+                setupProgress.innerText = `Setup Progress: ${completed} out of 10`;
+                form.reset();
+            });
+        });
+    </script>
 </body>
 </html>
