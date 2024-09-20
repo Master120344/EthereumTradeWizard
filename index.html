@@ -6,6 +6,7 @@
     <title>Crypto Arbitrage Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Inline styles for demonstration */
         body {
@@ -53,7 +54,7 @@
             padding: 20px;
         }
 
-        .summary, .active-bots, .trading-history {
+        .summary, .active-bots, .trading-history, .graph-section {
             margin: 20px 0;
         }
 
@@ -156,6 +157,15 @@
         .trade-row:last-child {
             border-bottom: none;
         }
+
+        .graph-section {
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: 400px;
+        }
     </style>
 </head>
 <body>
@@ -166,7 +176,6 @@
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Bots</a></li>
                 <li><a href="#">Settings</a></li>
-                <li><a href="#">Log Out</a></li>
             </ul>
         </nav>
     </header>
@@ -190,6 +199,11 @@
             </div>
         </section>
 
+        <section class="graph-section">
+            <h2>Trading Volume Over Time</h2>
+            <canvas id="volumeChart"></canvas>
+        </section>
+
         <section class="active-bots">
             <h2>Active Bots</h2>
             <div class="bot-list" id="bot-list">
@@ -200,18 +214,7 @@
         <section class="trading-history">
             <h2>Trading History</h2>
             <div id="trade-history">
-                <div class="trade-row">
-                    <div>Trade #1</div>
-                    <div>$100.00</div>
-                </div>
-                <div class="trade-row">
-                    <div>Trade #2</div>
-                    <div>$150.00</div>
-                </div>
-                <div class="trade-row">
-                    <div>Trade #3</div>
-                    <div>$200.00</div>
-                </div>
+                <!-- Trade rows will be dynamically generated here -->
             </div>
         </section>
 
@@ -239,6 +242,17 @@
                                 { name: "Ethereum Bot 2", profit: 150.00, status: "Active" },
                                 { name: "Bitcoin Bot 1", profit: 300.00, status: "Inactive" },
                                 { name: "Solana Bot 1", profit: 240.00, status: "Active" },
+                                { name: "Ethereum Bot 3", profit: 180.00, status: "Active" },
+                                { name: "Cardano Bot 1", profit: 220.00, status: "Inactive" },
+                                { name: "Polkadot Bot 1", profit: 190.00, status: "Active" },
+                                { name: "Litecoin Bot 1", profit: 170.00, status: "Active" },
+                                { name: "Dogecoin Bot 1", profit: 160.00, status: "Inactive" },
+                                { name: "Ripple Bot 1", profit: 210.00, status: "Active" }
+                            ],
+                            trades: [
+                                { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance' },
+                                { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase' },
+                                { tradeId: 3, amount: 200.00, fee: 2.00, exchange: 'Kraken' }
                             ]
                         });
                     }, 1000);
@@ -263,13 +277,58 @@
                 botList.innerHTML = ""; // Clear existing bots
                 data.bots.forEach(bot => {
                     const botCard = document.createElement("div");
-                    botCard.className = "bot-card";
+                    botCard.class
+botCard.className = "bot-card";
                     botCard.innerHTML = `
                         <h3>${bot.name}</h3>
                         <p>Status: <span class="status ${bot.status.toLowerCase()}">${bot.status}</span></p>
                         <p>Profit: <span class="profit">$${bot.profit.toFixed(2)}</span></p>
                     `;
                     botList.appendChild(botCard);
+                });
+
+                // Update trading history
+                const tradeHistory = document.getElementById("trade-history");
+                tradeHistory.innerHTML = ""; // Clear existing trades
+                data.trades.forEach(trade => {
+                    const tradeRow = document.createElement("div");
+                    tradeRow.className = "trade-row";
+                    tradeRow.innerHTML = `
+                        <div>Trade #${trade.tradeId}</div>
+                        <div>Amount: $${trade.amount.toFixed(2)}</div>
+                        <div>Fee: $${trade.fee.toFixed(2)}</div>
+                        <div>Exchange: ${trade.exchange}</div>
+                    `;
+                    tradeHistory.appendChild(tradeRow);
+                });
+
+                // Set up the trading volume chart
+                const ctx = document.getElementById('volumeChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Trading Volume',
+                            data: [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600], // Example data
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            borderWidth: 2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
                 });
             };
 
