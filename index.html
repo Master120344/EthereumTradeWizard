@@ -204,6 +204,16 @@
     </footer>
 
     <script>
+        const socket = new WebSocket(`ws://${window.location.host}`);
+
+        socket.addEventListener('message', function (event) {
+            const data = JSON.parse(event.data);
+            if (data.event === 'fileChanged') {
+                console.log(`File changed: ${data.filename}`);
+                updateDashboard(); // Refresh the dashboard on file change
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", () => {
             const fetchData = async () => {
                 // Simulated fetching data from API
@@ -232,12 +242,13 @@
                             ],
                             volumeData: {
                                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                                values: [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600] // Example data
+                                values: [500, 600,
+700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600] // Example data
                             }
                         });
                     }, 1000);
                 });
-});
+            };
 
             const updateDashboard = async () => {
                 const loading = document.getElementById("loading");
