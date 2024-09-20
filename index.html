@@ -3,15 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Arbitrage Dashboard</title>
+    <title>Bot Setup</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="exchanges.js" defer></script>
-    <script src="latency.js" defer></script>
-    <script src="livechart.js" defer></script>
-    <script src="trading.js" defer></script>
-    <script src="script.js" defer></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -25,22 +18,6 @@
             color: #fff;
             padding: 20px 0;
             text-align: center;
-            position: relative;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        nav ul li {
-            margin: 0 15px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
         }
         .container {
             width: 90%;
@@ -48,105 +25,51 @@
             margin: auto;
             padding: 20px;
         }
-        .summary, .active-bots, .trading-history, .graph-section {
-            margin: 20px 0;
-        }
-        h2 {
-            margin-bottom: 10px;
-            font-size: 1.5em;
-        }
-        .card {
-            display: flex;
-            justify-content: space-around;
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .card-item {
-            text-align: center;
-        }
-        .bot-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        .bot-card {
+        .setup-section {
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 15px;
-            margin: 10px;
-            width: calc(30% - 20px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .bot-card:hover {
-            transform: scale(1.05);
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            margin-bottom: 15px;
         }
-        .status {
+        label {
+            margin-top: 10px;
+            display: block;
             font-weight: bold;
         }
-        .status.active {
-            color: green;
-        }
-        .status.inactive {
-            color: red;
-        }
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        footer {
-            text-align: center;
-            padding: 15px 0;
-            background: #333;
-            color: #fff;
-            position: relative;
-            bottom: 0;
+        input[type="text"] {
             width: 100%;
-        }
-        .trading-history {
-            background: #fff;
-            padding: 15px;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .trade-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .trade-row:last-child {
-            border-bottom: none;
-        }
-        .graph-section {
-            text-align: center;
-        }
-        canvas {
-            max-width: 100%;
-            height: 400px;
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Crypto Arbitrage Dashboard</h1>
+        <h1>Bot Setup</h1>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
@@ -155,182 +78,42 @@
         </nav>
     </header>
 
-    <main class="container">
-        <section class="summary">
-            <h2>Account Summary</h2>
-            <div class="card">
-                <div class="card-item">
-                    <h3>Current Balance</h3>
-                    <p id="current-balance">$0.00</p>
+    <div class="container">
+        <div class="success-message" id="success-message">Changes saved successfully!</div>
+        <form id="bot-setup-form">
+            <div id="setup-sections">
+                <!-- Sections for bot setups -->
+                <div class="setup-section">
+                    <label for="bot-select-1">Select Bot 1:</label>
+                    <select id="bot-select-1" class="bot-select">
+                        <!-- Options populated by JavaScript -->
+                    </select>
+                    <label for="api-key-1">API Key:</label>
+                    <input type="text" id="api-key-1" required>
+                    <label for="receiving-address-1">Receiving Address:</label>
+                    <input type="text" id="receiving-address-1" required>
+                    <label for="deposit-address-1">Deposit Address:</label>
+                    <input type="text" id="deposit-address-1" required>
                 </div>
-                <div class="card-item">
-                    <h3>Total Profit</h3>
-                    <p id="total-profit">$0.00</p>
+                <!-- Repeat similar blocks for 10 sections -->
+                <div class="setup-section">
+                    <label for="bot-select-2">Select Bot 2:</label>
+                    <select id="bot-select-2" class="bot-select">
+                        <!-- Options populated by JavaScript -->
+                    </select>
+                    <label for="api-key-2">API Key:</label>
+                    <input type="text" id="api-key-2" required>
+                    <label for="receiving-address-2">Receiving Address:</label>
+                    <input type="text" id="receiving-address-2" required>
+                    <label for="deposit-address-2">Deposit Address:</label>
+                    <input type="text" id="deposit-address-2" required>
                 </div>
-                <div class="card-item">
-                    <h3>Total Trades</h3>
-                    <p id="total-trades">0</p>
-                </div>
+                <!-- Add more sections as needed up to 10 -->
             </div>
-        </section>
+            <button type="submit">Save Setup</button>
+        </form>
+    </div>
 
-        <section class="graph-section">
-            <h2>Trading Volume Over Time</h2>
-            <canvas id="volumeChart"></canvas>
-            <button id="refreshButton">Refresh Data</button>
-        </section>
-
-        <section class="active-bots">
-            <h2>Active Bots</h2>
-            <div class="bot-list" id="bot-list">
-                <!-- Bot cards will be dynamically generated here -->
-            </div>
-        </section>
-
-        <section class="trading-history">
-            <h2>Trading History</h2>
-            <div id="trade-history">
-                <!-- Trade rows will be dynamically generated here -->
-            </div>
-        </section>
-
-        <div class="loading" id="loading" style="display:none;">
-            <div class="spinner"></div>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Crypto Arbitrage. All rights reserved.</p>
-    </footer>
-
-    <script>
-        const socket = new WebSocket(`ws://${window.location.host}`);
-
-        socket.addEventListener('message', function (event) {
-            const data = JSON.parse(event.data);
-            if (data.event === 'fileChanged') {
-                console.log(`File changed: ${data.filename}`);
-                updateDashboard(); // Refresh the dashboard on file change
-            }
-        });
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const fetchData = async () => {
-                // Simulated fetching data from API
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve({
-                            currentBalance: 12345.67,
-                            totalProfit: 890.12,
-                            totalTrades: 15,
-                            bots: [
-                                { name: "Ethereum Bot 1", profit: 200.00, status: "Active" },
-                                { name: "Ethereum Bot 2", profit: 150.00, status: "Active" },
-                                { name: "Bitcoin Bot 1", profit: 300.00, status: "Inactive" },
-                                { name: "Solana Bot 1", profit: 240.00, status: "Active" },
-                                { name: "Ethereum Bot 3", profit: 180.00, status: "Active" },
-                                { name: "Cardano Bot 1", profit: 220.00, status: "Inactive" },
-                                { name: "Polkadot Bot 1", profit: 190.00, status: "Active" },
-                                { name: "Litecoin Bot 1", profit: 170.00, status: "Active" },
-                                { name: "Dogecoin Bot 1", profit: 160.00, status: "Inactive" },
-                                { name: "Ripple Bot 1", profit: 210.00, status: "Active" }
-                            ],
-                            trades: [
-                                { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance', profit: 2.00, date: '2024-09-01' },
-                                { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase', profit: 3.50, date: '2024-09-02' },
-                                { tradeId: 3, amount: 200.00, fee: 2.00, exchange: 'Kraken', profit: 4.00, date: '2024-09-03' }
-                            ],
-                            volumeData: {
-                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                                values: [500, 600,
-700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600] // Example data
-                            }
-                        });
-                    }, 1000);
-                });
-            };
-
-            const updateDashboard = async () => {
-                const loading = document.getElementById("loading");
-                loading.style.display = "flex"; // Show loading spinner
-
-                const data = await fetchData();
-
-                loading.style.display = "none"; // Hide loading spinner
-
-                // Update balance, profit, and total trades
-                document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
-                document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
-                document.getElementById("total-trades").innerText = data.totalTrades;
-
-                // Update bot information
-                const botList = document.getElementById("bot-list");
-                botList.innerHTML = ""; // Clear existing bots
-                data.bots.forEach(bot => {
-                    const botCard = document.createElement("div");
-                    botCard.className = "bot-card";
-                    botCard.innerHTML = `
-                        <h3>${bot.name}</h3>
-                        <p>Status: <span class="status ${bot.status.toLowerCase()}">${bot.status}</span></p>
-                        <p>Profit: <span class="profit">$${bot.profit.toFixed(2)}</span></p>
-                    `;
-                    botList.appendChild(botCard);
-                });
-
-                // Update trading history
-                const tradeHistory = document.getElementById("trade-history");
-                tradeHistory.innerHTML = ""; // Clear existing trades
-                data.trades.forEach(trade => {
-                    const tradeRow = document.createElement("div");
-                    tradeRow.className = "trade-row";
-                    tradeRow.innerHTML = `
-                        <div>Trade #${trade.tradeId} on ${trade.date}</div>
-                        <div>Amount: $${trade.amount.toFixed(2)}</div>
-                        <div>Fee: $${trade.fee.toFixed(2)}</div>
-                        <div>Profit: $${trade.profit.toFixed(2)}</div>
-                        <div>Exchange: ${trade.exchange}</div>
-                    `;
-                    tradeHistory.appendChild(tradeRow);
-                });
-
-                // Set up the trading volume chart
-                const ctx = document.getElementById('volumeChart').getContext('2d');
-                const volumeChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.volumeData.labels,
-                        datasets: [{
-                            label: 'Trading Volume',
-                            data: data.volumeData.values,
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                            borderWidth: 2,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: {
-                                beginAtZero: true
-                            },
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            };
-
-            // Initial loading
-            updateDashboard();
-
-            // Refresh data on button click
-            document.getElementById('refreshButton').addEventListener('click', () => {
-                updateDashboard();
-            });
-        });
-    </script>
+    <script src="setup.js"></script>
 </body>
 </html>
