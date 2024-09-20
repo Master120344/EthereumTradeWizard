@@ -1,5 +1,3 @@
-# notifications.py
-
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -38,25 +36,38 @@ class EmailNotification:
                 server.login(self.smtp_user, self.smtp_password)
                 server.send_message(msg)
                 logging.info(f"Email sent to {self.recipient} with subject: {subject}")
+        except smtplib.SMTPAuthenticationError:
+            logging.error("SMTP Authentication Error. Check your SMTP credentials.")
+        except smtplib.SMTPConnectError:
+            logging.error("SMTP Connection Error. Unable to connect to the SMTP server.")
         except Exception as e:
             logging.error(f"Error sending email: {e}")
 
     def notify_order_placed(self, order_id: str, exchange: str, pair: str) -> None:
         """Notify about a new order placement."""
         subject = f"New Order Placed: {order_id}"
-        body = f"Order ID: {order_id}\nExchange: {exchange}\nPair: {pair}\nStatus: Placed"
+        body = (f"Order ID: {order_id}\n"
+                f"Exchange: {exchange}\n"
+                f"Pair: {pair}\n"
+                f"Status: Placed")
         self.send_email(subject, body)
 
     def notify_order_filled(self, order_id: str, exchange: str, pair: str) -> None:
         """Notify about an order being filled."""
         subject = f"Order Filled: {order_id}"
-        body = f"Order ID: {order_id}\nExchange: {exchange}\nPair: {pair}\nStatus: Filled"
+        body = (f"Order ID: {order_id}\n"
+                f"Exchange: {exchange}\n"
+                f"Pair: {pair}\n"
+                f"Status: Filled")
         self.send_email(subject, body)
 
     def notify_order_failed(self, order_id: str, exchange: str, pair: str) -> None:
         """Notify about a failed order."""
         subject = f"Order Failed: {order_id}"
-        body = f"Order ID: {order_id}\nExchange: {exchange}\nPair: {pair}\nStatus: Failed"
+        body = (f"Order ID: {order_id}\n"
+                f"Exchange: {exchange}\n"
+                f"Pair: {pair}\n"
+                f"Status: Failed")
         self.send_email(subject, body)
 
     def notify_arbitrage_opportunity(self, buy_exchange: str, sell_exchange: str, buy_price: float, sell_price: float) -> None:
