@@ -1,5 +1,3 @@
-# exchange_connector.py
-
 import aiohttp
 import asyncio
 import json
@@ -7,7 +5,7 @@ import logging
 import hmac
 import hashlib
 import time
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional
 from config import EXCHANGE_API_KEYS, EXCHANGE_URLS
 
 # Setup logging
@@ -25,13 +23,19 @@ class ExchangeConnector:
         self.api_key = EXCHANGE_API_KEYS[exchange_name]['api_key']
         self.api_secret = EXCHANGE_API_KEYS[exchange_name]['api_secret']
         self.base_url = EXCHANGE_URLS[exchange_name]
-        self.session = aiohttp.ClientSession()
-        self.rate_limit = 1  # Example rate limit per second
+        self.rate_limit = 1  # Rate limit per second (can be configured per exchange)
         self._last_request_time = 0
-        self._rate_limit_interval = 1  # 1 second for rate limiting
+        self._rate_limit_interval = 1  # Interval in seconds for rate limiting
+        self.session = None
+
+    async def start(self) -> None:
+        """Initialize the aiohttp session."""
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
 
     async def fetch_price(self, pair: str) -> Optional[float]:
         """Fetch the current price of a trading pair with advanced retry mechanism."""
+        await self.start()
         url = f"{self.base_url}/api/v3/ticker/price?symbol={self._pair_to_symbol(pair)}"
         retries = 5
         for attempt in range(retries):
@@ -51,6 +55,7 @@ class ExchangeConnector:
 
     async def place_order(self, pair: str, amount: float, price: float, side: str) -> Dict[str, Any]:
         """Place a buy or sell order with authentication and advanced retry mechanism."""
+        await self.start()
         url = f"{self.base_url}/api/v3/order"
         payload = {
             'symbol': self._pair_to_symbol(pair),
@@ -82,17 +87,16 @@ class ExchangeConnector:
                 await asyncio.sleep(self._get_backoff_delay(attempt))
         return {}
 
-    async def get_websocket_url(self) -> str:
-        """Get the WebSocket URL for real-time data."""
-        return f"wss://{self.exchange_name}.com/ws/{self._pair_to_symbol('BTC/USD')}@trade"
-
     async def listen_to_websocket(self) -> None:
         """Listen to WebSocket updates with advanced management."""
         websocket_url = await self.get_websocket_url()
+        retries = 5  # Add limit to number of retries for WebSocket reconnections
+        attempt = 0
         async with aiohttp.ClientSession() as session:
-            while True:
+            while attempt < retries:
                 try:
                     async with session.ws_connect(websocket_url) as ws:
+                        attempt = 0  # Reset retries after a successful connection
                         while True:
                             msg = await ws.receive()
                             if msg.type == aiohttp.WSMsgType.TEXT:
@@ -101,8 +105,13 @@ class ExchangeConnector:
                                 logging.error(f"WebSocket error: {ws.exception()}")
                                 break
                 except Exception as e:
+                    attempt += 1
                     logging.error(f"WebSocket communication error: {e}")
-                    await asyncio.sleep(5)  # Wait before reconnecting
+                    await asyncio.sleep(5 * attempt)  # Exponential backoff before reconnecting
+
+    async def get_websocket_url(self) -> str:
+        """Get the WebSocket URL for real-time data."""
+        return f"wss://{self.exchange_name}.com/ws/{self._pair_to_symbol('BTC/USD')}@trade"
 
     async def _process_websocket_message(self, message: str) -> None:
         """Process and parse a WebSocket message with enhanced parsing."""
@@ -138,7 +147,6 @@ class ExchangeConnector:
 
     def _symbol_to_pair(self, symbol: str) -> Optional[str]:
         """Convert exchange symbol to trading pair."""
-        # Example conversion - needs customization per exchange
         return symbol[:3] + '/' + symbol[3:]
 
     def _generate_signature(self, params: Dict[str, Any]) -> str:
@@ -148,7 +156,9 @@ class ExchangeConnector:
 
     async def close(self) -> None:
         """Close the aiohttp session."""
-        await self.session.close()
+        if self.session:
+            await self.session.close()
+            logging.info("Session closed successfully")
 
 async def main():
     """Example usage of ExchangeConnector."""
