@@ -7,13 +7,95 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="exchanges.js" defer></script>
-    <script src="latency.js" defer></script>
-    <script src="livechart.js" defer></script>
-    <script src="trading.js" defer></script>
-    <script src="script.js" defer></script>
     <style>
-        /* Add any additional styles here */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #4CAF50;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .summary, .graph-section, .profit-info, .bot-status {
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        .profit-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .time-info {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        canvas {
+            max-width: 100%;
+            height: 400px;
+        }
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background: #333;
+            color: #fff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .status-table th, .status-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .status-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+        }
     </style>
 </head>
 <body>
@@ -30,122 +112,140 @@
     <main class="container">
         <section class="summary">
             <h2>Account Summary</h2>
-            <div class="card">
-                <div class="card-item">
-                    <h3>Current Balance</h3>
-                    <p id="current-balance">$0.00</p>
-                </div>
-                <div class="card-item">
-                    <h3>Daily Profit</h3>
-                    <p id="daily-profit">$0.00</p>
-                </div>
-                <div class="card-item">
-                    <h3>Total Trades</h3>
-                    <p id="total-trades">0</p>
-                </div>
+            <div class="profit-info">
+                <div><strong>Current Balance:</strong> <span id="current-balance">$0.00</span></div>
+                <div><strong>Daily Profit:</strong> <span id="daily-profit">$0.00</span></div>
+                <div><strong>Overall Profit:</strong> <span id="overall-profit">$0.00</span></div>
             </div>
+            <div class="time-info" id="time-info"></div>
         </section>
 
         <section class="graph-section">
             <h2>Bot Performance</h2>
-            <canvas id="performanceChart"></canvas>
+            <canvas id="bot1Chart"></canvas>
+            <canvas id="bot2Chart"></canvas>
+            <p>Charts reset every 24 hours.</p>
         </section>
 
-        <section class="executing-trades">
-            <h2>Currently Executing Trades</h2>
-            <div id="trade-history">
-                <!-- Trade rows will be dynamically generated here -->
-            </div>
+        <section class="bot-status">
+            <h2>Active Bots Status</h2>
+            <table class="status-table">
+                <thead>
+                    <tr>
+                        <th>Bot Name</th>
+                        <th>Status</th>
+                        <th>Last Trade</th>
+                        <th>Profit/Loss</th>
+                    </tr>
+                </thead>
+                <tbody id="bot-status-body">
+                    <tr>
+                        <td>Bot 1</td>
+                        <td>Active</td>
+                        <td>10:30 AM</td>
+                        <td>$15.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 2</td>
+                        <td>Inactive</td>
+                        <td>N/A</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 3</td>
+                        <td>Active</td>
+                        <td>10:25 AM</td>
+                        <td>$10.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 4</td>
+                        <td>Active</td>
+                        <td>10:20 AM</td>
+                        <td>$20.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 5</td>
+                        <td>Active</td>
+                        <td>10:15 AM</td>
+                        <td>$25.00</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
-
-        <div class="loading" id="loading" style="display:none;">
-            <div class="spinner"></div>
-        </div>
     </main>
 
     <footer>
         <p>&copy; 2024 Crypto Arbitrage. All rights reserved.</p>
+        <p class="footer-note">Note: Ensure your API keys and wallet addresses are secure.</p>
     </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const fetchData = async () => {
-                // Simulated fetching data from API
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve({
-                            currentBalance: 12345.67,
-                            dailyProfit: 250.00,
-                            totalTrades: 20,
-                            performanceData: {
-                                labels: ['Bot 1', 'Bot 2', 'Bot 3', 'Bot 4', 'Bot 5'],
-                                profits: [200, 150, 300, 180, 220]
-                            },
-                            trades: [
-                                { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance', profit: 2.00, date: '2024-09-01' },
-                                { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase', profit: 3.50, date: '2024-09-02' }
-                            ]
-                        });
-                    }, 1000);
-                });
+            const currentBalance = document.getElementById("current-balance");
+            const dailyProfit = document.getElementById("daily-profit");
+            const overallProfit = document.getElementById("overall-profit");
+            const timeInfo = document.getElementById("time-info");
+
+            const updateTime = () => {
+                const now = new Date();
+                const options = { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                timeInfo.innerText = `Current Time: ${now.toLocaleTimeString('en-US', options)}`;
             };
 
-            const updateDashboard = async () => {
-                const loading = document.getElementById("loading");
-                loading.style.display = "flex"; // Show loading spinner
+            const bot1Data = { labels: [], data: [] };
+            const bot2Data = { labels: [], data: [] };
 
-                const data = await fetchData();
+            for (let i = 0; i < 10; i++) {
+                const label = `Day ${i + 1}`;
+                bot1Data.labels.push(label);
+                bot2Data.labels.push(label);
+                bot1Data.data.push(Math.random() * 100);
+                bot2Data.data.push(Math.random() * 100);
+            }
 
-                loading.style.display = "none"; // Hide loading spinner
-
-                // Update balance, daily profit, and total trades
-                document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
-                document.getElementById("daily-profit").innerText = `$${data.dailyProfit.toFixed(2)}`;
-                document.getElementById("total-trades").innerText = data.totalTrades;
-
-                // Set up the bot performance chart
-                const ctx = document.getElementById('performanceChart').getContext('2d');
-                const performanceChart = new Chart(ctx, {
-                    type: 'bar',
+            const createChart = (ctx, data, title) => {
+                return new Chart(ctx, {
+                    type: 'line',
                     data: {
-                        labels: data.performanceData.labels,
+                        labels: data.labels,
                         datasets: [{
-                            label: 'Profit',
-                            data: data.performanceData.profits,
-                            backgroundColor: 'rgba(52, 152, 219, 0.6)',
-                            borderColor: 'rgba(52, 152, 219, 1)',
-                            borderWidth: 1
+                            label: title,
+                            data: data.data,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            borderWidth: 2,
+                            fill: true
                         }]
                     },
                     options: {
                         responsive: true,
                         scales: {
+                            x: {
+                                title: { display: true, text: 'Days' }
+                            },
                             y: {
+                                title: { display: true, text: 'Profit ($)' },
                                 beginAtZero: true
                             }
                         }
                     }
                 });
-
-                // Update trading history
-                const tradeHistory = document.getElementById("trade-history");
-                tradeHistory.innerHTML = ""; // Clear existing trades
-                data.trades.forEach(trade => {
-                    const tradeRow = document.createElement("div");
-                    tradeRow.className = "trade-row";
-                    tradeRow.innerHTML = `
-                        <div>Trade #${trade.tradeId} on ${trade.date}</div>
-                        <div>Amount: $${trade.amount.toFixed(2)}</div>
-                        <div>Fee: $${trade.fee.toFixed(2)}</div>
-                        <div>Profit: $${trade.profit.toFixed(2)}</div>
-                        <div>Exchange: ${trade.exchange}</div>
-                    `;
-                    tradeHistory.appendChild(tradeRow);
-                });
             };
 
-            // Initial loading
-            updateDashboard();
+            const ctx1 = document.getElementById('bot1Chart').getContext('2d');
+            const ctx2 = document.getElementById('bot2Chart').getContext('2d');
+            createChart(ctx1, bot1Data, 'Bot 1 Daily Profits');
+            createChart(ctx2, bot2Data, 'Bot 2 Daily Profits');
+
+            const updateDashboard = () => {
+                currentBalance.innerText = `$${(Math.random() * 10000).toFixed(2)}`;
+                dailyProfit.innerText = `$${(Math.random() * 500).toFixed(2)}`;
+                overallProfit.innerText = `$${(Math.random() * 2000).toFixed(2)}`;
+            };
+
+            updateTime();
+            setInterval(updateTime, 1000);
+            setInterval(updateDashboard, 5000);
         });
     </script>
 </body>
