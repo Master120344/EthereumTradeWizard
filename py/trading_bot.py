@@ -1,14 +1,12 @@
 # trading_bot.py
 
 import asyncio
-import time
 import logging
 import requests
-import websockets
 from typing import List, Dict, Any
 from config import (
-    EXCHANGE_API_KEYS, EXCHANGE_URLS, TRADING_PAIRS, ARBITRAGE_PARAMS, GAS_PRICE, 
-    LOGGING_SETTINGS, TIMING_SETTINGS, NOTIFICATION_SETTINGS
+    EXCHANGE_API_KEYS, EXCHANGE_URLS, TRADING_PAIRS, ARBITRAGE_PARAMS, 
+    LOGGING_SETTINGS, TIMING_SETTINGS
 )
 
 # Setup logging
