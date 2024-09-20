@@ -1,5 +1,3 @@
-# interactive_bot.py
-
 import asyncio
 import logging
 from typing import List
@@ -21,7 +19,7 @@ class InteractiveBot:
     def __init__(self):
         self.data_storage = DataStorage('trading_data.db')
         self.email_notifier = EmailNotification()
-        self.exchanges = list(EXCHANGE_API_KEYS.keys())
+        self.exchanges = [exchange.lower() for exchange in EXCHANGE_API_KEYS.keys()]
 
     def start(self):
         """Start the interactive bot."""
@@ -109,7 +107,7 @@ class InteractiveBot:
     def _view_settings(self):
         """View current bot settings."""
         print("\nCurrent Bot Settings:")
-        print("Exchanges:", EXCHANGE_API_KEYS.keys())
+        print("Exchanges:", ', '.join(EXCHANGE_API_KEYS.keys()))
         print("Trading Pairs:", TRADING_PAIRS)
         print("Arbitrage Parameters:", ARBITRAGE_PARAMS)
         print("Gas Prices:", GAS_PRICE)
