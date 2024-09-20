@@ -14,7 +14,7 @@ logging.basicConfig(filename='utils.log',
 
 class ConfigManager:
     """Class for managing application configuration."""
-    
+
     def __init__(self, config_file: str):
         self.config_file = config_file
         self.config = self.load_config()
@@ -26,7 +26,6 @@ class ConfigManager:
         try:
             with open(self.config_file, 'r') as file:
                 config = json.load(file)
-            # Validate configuration if needed
             self.validate_config(config)
             return config
         except json.JSONDecodeError as e:
@@ -112,7 +111,7 @@ def parallel_process(func: Callable, items: list, max_workers: int = 5) -> list:
 
 class DataValidator:
     """Class for validating data."""
-    
+
     @staticmethod
     def validate_price(price: float) -> bool:
         """Validate price to be a positive number."""
