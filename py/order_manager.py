@@ -1,11 +1,9 @@
-# order_manager.py
-
 import asyncio
 import logging
 import requests
 import websockets
 import json
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from config import EXCHANGE_API_KEYS, EXCHANGE_URLS, TIMING_SETTINGS
 
 # Setup logging
@@ -73,9 +71,7 @@ class OrderManager:
     async def monitor_orders(self) -> None:
         """Monitor the status of all active orders."""
         while True:
-            tasks = []
-            for order_id, order_info in self.orders.items():
-                tasks.append(self._check_order_status(order_id, order_info))
+            tasks = [self._check_order_status(order_id, order_info) for order_id, order_info in self.orders.items()]
             await asyncio.gather(*tasks)
             await asyncio.sleep(10)  # Monitor every 10 seconds
 
@@ -135,9 +131,7 @@ class ExchangeAPI:
     async def place_order(self, pair: str, amount: float, price: float, order_type: str) -> Dict[str, Any]:
         """Place an order on the exchange."""
         url = f"{self.base_url}/api/v3/order"
-        headers = {
-            'X-MBX-APIKEY': self.api_key
-        }
+        headers = {'X-MBX-APIKEY': self.api_key}
         params = {
             'symbol': pair.replace('/', ''),
             'side': order_type,
@@ -158,12 +152,8 @@ class ExchangeAPI:
     async def cancel_order(self, order_id: str) -> Dict[str, Any]:
         """Cancel an existing order."""
         url = f"{self.base_url}/api/v3/order"
-        headers = {
-            'X-MBX-APIKEY': self.api_key
-        }
-        params = {
-            'orderId': order_id
-        }
+        headers = {'X-MBX-APIKEY': self.api_key}
+        params = {'orderId': order_id}
         
         try:
             response = self.session.delete(url, headers=headers, params=params)
@@ -176,12 +166,8 @@ class ExchangeAPI:
     async def get_order_status(self, order_id: str) -> Dict[str, Any]:
         """Get the status of an existing order."""
         url = f"{self.base_url}/api/v3/order"
-        headers = {
-            'X-MBX-APIKEY': self.api_key
-        }
-        params = {
-            'orderId': order_id
-        }
+        headers = {'X-MBX-APIKEY': self.api_key}
+        params = {'orderId': order_id}
         
         try:
             response = self.session.get(url, headers=headers, params=params)
@@ -192,6 +178,9 @@ class ExchangeAPI:
             return {}
 
     def get_websocket_url(self) -> str:
+        """Return the WebSocket URL for the exchange."""
+        return f"wss://{self.exchange
+def get_websocket_url(self) -> str:
         """Return the WebSocket URL for the exchange."""
         return f"wss://{self.exchange_name}.websocket.url"  # Replace with actual WebSocket URL
 
