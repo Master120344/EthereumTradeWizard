@@ -1,19 +1,46 @@
 const updateDashboard = async () => {
     const loading = document.getElementById("loading");
-    loading.style.display = "flex"; // Show loading spinner
+    const botList = document.querySelector(".bot-list");
+    const currentBalanceElement = document.getElementById("current-balance");
+    const totalProfitElement = document.getElementById("total-profit");
 
-    const data = await fetchData();
-    
-    loading.style.display = "none"; // Hide loading spinner
+    try {
+        loading.style.display = "flex"; // Show loading spinner
+        const data = await fetchData();
 
-    // Update balance and profit
-    document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
-    document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
+        if (!data || typeof data !== "object") {
+            throw new Error("Invalid data format.");
+        }
 
-    // Update bot information
+        // Hide loading spinner
+        loading.style.display = "none";
+
+        // Update balance and profit with validation
+        if (data.currentBalance && data.totalProfit) {
+            currentBalanceElement.innerText = `$${data.currentBalance.toFixed(2)}`;
+            totalProfitElement.innerText = `$${data.totalProfit.toFixed(2)}`;
+        } else {
+            currentBalanceElement.innerText = `$0.00`;
+            totalProfitElement.innerText = `$0.00`;
+        }
+
+        // Update bot information
+        updateBotList(data.bots);
+        
+    } catch (error) {
+        loading.style.display = "none"; // Hide loading even on failure
+        console.error("Error updating dashboard:", error);
+        // Optional: Display a user-friendly message in the UI
+    }
+};
+
+const updateBotList = (bots) => {
     const botList = document.querySelector(".bot-list");
     botList.innerHTML = ""; // Clear existing bots
-    data.bots.forEach(bot => {
+
+    if (!Array.isArray(bots)) return;
+
+    bots.forEach(bot => {
         const botCard = document.createElement("div");
         botCard.className = "bot-card";
         botCard.innerHTML = `
