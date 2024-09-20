@@ -3,62 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setup Bots</title>
+    <title>Setup Crypto Bots</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="setup.js" defer></script>
+    <script src="script.js" defer></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #4CAF50;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+        .form-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .notification {
+            display: none;
+            padding: 10px;
+            background: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Setup Your Crypto Bots</h1>
+        <h1>Setup Crypto Bots</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="setup.html">Setup</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main class="container">
-        <section class="setup-form">
-            <h2>Configure Bots</h2>
-            <form id="bot-setup-form">
-                <label for="bot-select">Choose a Bot:</label>
-                <select id="bot-select" name="bot-select">
-                    <option value="" disabled selected>Select a bot</option>
-                    <option value="Ethereum Bot 1">Ethereum Bot 1</option>
-                    <option value="Ethereum Bot 2">Ethereum Bot 2</option>
-                    <option value="Bitcoin Bot 1">Bitcoin Bot 1</option>
-                    <option value="Solana Bot 1">Solana Bot 1</option>
-                    <option value="Polkadot Bot 1">Polkadot Bot 1</option>
-                    <option value="Cardano Bot 1">Cardano Bot 1</option>
-                    <option value="Litecoin Bot 1">Litecoin Bot 1</option>
-                    <option value="Dogecoin Bot 1">Dogecoin Bot 1</option>
-                    <option value="Ripple Bot 1">Ripple Bot 1</option>
-                    <option value="Uniswap Bot 1">Uniswap Bot 1</option>
-                </select>
+        <div class="notification" id="successNotification">Changes saved successfully!</div>
+        
+        <section class="form-section">
+            <h2>Configure Your Bots</h2>
+            <form id="botSetupForm">
+                <label for="apiKey">API Key:</label>
+                <input type="text" id="apiKey" name="apiKey" required>
 
                 <label for="exchange">Crypto Exchange:</label>
-                <input type="text" id="exchange" name="exchange" placeholder="Enter exchange name" required>
+                <select id="exchange" name="exchange" required>
+                    <option value="Binance">Binance</option>
+                    <option value="Coinbase">Coinbase</option>
+                    <option value="Kraken">Kraken</option>
+                    <!-- Add more exchanges as needed -->
+                </select>
 
-                <label for="api-key">API Key:</label>
-                <input type="text" id="api-key" name="api-key" placeholder="Enter API key" required>
+                <label for="walletAddress">Wallet Address:</label>
+                <input type="text" id="walletAddress" name="walletAddress" required>
 
-                <label for="api-secret">API Secret (if necessary):</label>
-                <input type="text" id="api-secret" name="api-secret" placeholder="Enter API secret">
-
-                <label for="seed-phrase">Seed Phrase (if required):</label>
-                <input type="text" id="seed-phrase" name="seed-phrase" placeholder="Enter seed phrase (optional)">
-
-                <label for="wallet-address">Wallet Address:</label>
-                <input type="text" id="wallet-address" name="wallet-address" placeholder="Enter wallet address" required>
-
-                <button type="submit">Setup Bot</button>
+                <button type="submit">Save Changes</button>
             </form>
-            <div id="used-bots" class="used-bots">
-                <h3>Used Bots</h3>
-                <ul id="used-bot-list">
-                    <!-- Dynamically populated list of used bots -->
-                </ul>
-            </div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Crypto Arbitrage. All rights reserved.</p>
-    </footer>
+    <script>
+        document.getElementById("botSetupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Simulated saving process
+            const notification = document.getElementById("successNotification");
+            notification.style.display = "block";
+
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+
+            // Here you can add actual saving logic, e.g., sending data to a server
+        });
+    </script>
 </body>
 </html>
