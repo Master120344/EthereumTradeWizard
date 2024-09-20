@@ -13,7 +13,6 @@
     <script src="trading.js" defer></script>
     <script src="script.js" defer></script>
     <style>
-        /* Inline styles for demonstration */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
@@ -27,24 +26,6 @@
             padding: 20px 0;
             text-align: center;
             position: relative;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            padding: 0;
-        }
-        nav ul li {
-            margin: 0 15px;
-        }
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-        nav ul li a:hover {
-            color: #ddd;
         }
         .container {
             width: 90%;
@@ -151,13 +132,6 @@
 <body>
     <header>
         <h1>Crypto Arbitrage Dashboard</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Bots</a></li>
-                <li><a href="#">Settings</a></li>
-            </ul>
-        </nav>
     </header>
 
     <main class="container">
@@ -231,9 +205,9 @@
                                 { name: "Ripple Bot 1", profit: 210.00, status: "Active" }
                             ],
                             trades: [
-                                { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance' },
-                                { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase' },
-                                { tradeId: 3, amount: 200.00, fee: 2.00, exchange: 'Kraken' }
+                                { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance', profit: 2.00, date: '2024-09-01' },
+                                { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase', profit: 3.50, date: '2024-09-02' },
+                                { tradeId: 3, amount: 200.00, fee: 2.00, exchange: 'Kraken', profit: 4.00, date: '2024-09-03' }
                             ],
                             volumeData: {
                                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -250,12 +224,13 @@
 
                 const data = await fetchData();
 
-                loading.style.display = "
-loading.style.display = "none"; // Hide loading spinner
+                loading.style.display = "none"; // Hide loading spinner
 
                 // Update balance, profit, and total trades
                 document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
                 document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
+                document.getElementById("total-trades").innerText = data
+// Update total trades
                 document.getElementById("total-trades").innerText = data.totalTrades;
 
                 // Update bot information
@@ -279,9 +254,10 @@ loading.style.display = "none"; // Hide loading spinner
                     const tradeRow = document.createElement("div");
                     tradeRow.className = "trade-row";
                     tradeRow.innerHTML = `
-                        <div>Trade #${trade.tradeId}</div>
+                        <div>Trade #${trade.tradeId} on ${trade.date}</div>
                         <div>Amount: $${trade.amount.toFixed(2)}</div>
                         <div>Fee: $${trade.fee.toFixed(2)}</div>
+                        <div>Profit: $${trade.profit.toFixed(2)}</div>
                         <div>Exchange: ${trade.exchange}</div>
                     `;
                     tradeHistory.appendChild(tradeRow);
