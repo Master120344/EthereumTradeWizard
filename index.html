@@ -3,73 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bot Setup</title>
+    <title>Crypto Arbitrage Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="exchanges.js" defer></script>
+    <script src="latency.js" defer></script>
+    <script src="livechart.js" defer></script>
+    <script src="trading.js" defer></script>
+    <script src="script.js" defer></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            line-height: 1.6;
-        }
-        header {
-            background: #4CAF50;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-        }
-        .setup-section {
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 15px 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .success-message {
-            background: #4CAF50;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-            margin-bottom: 15px;
-        }
-        label {
-            margin-top: 10px;
-            display: block;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
+        /* Add any additional styles here */
     </style>
 </head>
 <body>
     <header>
-        <h1>Bot Setup</h1>
+        <h1>Crypto Arbitrage Dashboard</h1>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
@@ -78,42 +27,126 @@
         </nav>
     </header>
 
-    <div class="container">
-        <div class="success-message" id="success-message">Changes saved successfully!</div>
-        <form id="bot-setup-form">
-            <div id="setup-sections">
-                <!-- Sections for bot setups -->
-                <div class="setup-section">
-                    <label for="bot-select-1">Select Bot 1:</label>
-                    <select id="bot-select-1" class="bot-select">
-                        <!-- Options populated by JavaScript -->
-                    </select>
-                    <label for="api-key-1">API Key:</label>
-                    <input type="text" id="api-key-1" required>
-                    <label for="receiving-address-1">Receiving Address:</label>
-                    <input type="text" id="receiving-address-1" required>
-                    <label for="deposit-address-1">Deposit Address:</label>
-                    <input type="text" id="deposit-address-1" required>
+    <main class="container">
+        <section class="summary">
+            <h2>Account Summary</h2>
+            <div class="card">
+                <div class="card-item">
+                    <h3>Current Balance</h3>
+                    <p id="current-balance">$0.00</p>
                 </div>
-                <!-- Repeat similar blocks for 10 sections -->
-                <div class="setup-section">
-                    <label for="bot-select-2">Select Bot 2:</label>
-                    <select id="bot-select-2" class="bot-select">
-                        <!-- Options populated by JavaScript -->
-                    </select>
-                    <label for="api-key-2">API Key:</label>
-                    <input type="text" id="api-key-2" required>
-                    <label for="receiving-address-2">Receiving Address:</label>
-                    <input type="text" id="receiving-address-2" required>
-                    <label for="deposit-address-2">Deposit Address:</label>
-                    <input type="text" id="deposit-address-2" required>
+                <div class="card-item">
+                    <h3>Daily Profit</h3>
+                    <p id="daily-profit">$0.00</p>
                 </div>
-                <!-- Add more sections as needed up to 10 -->
+                <div class="card-item">
+                    <h3>Total Trades</h3>
+                    <p id="total-trades">0</p>
+                </div>
             </div>
-            <button type="submit">Save Setup</button>
-        </form>
-    </div>
+        </section>
 
-    <script src="setup.js"></script>
+        <section class="graph-section">
+            <h2>Bot Performance</h2>
+            <canvas id="performanceChart"></canvas>
+        </section>
+
+        <section class="executing-trades">
+            <h2>Currently Executing Trades</h2>
+            <div id="trade-history">
+                <!-- Trade rows will be dynamically generated here -->
+            </div>
+        </section>
+
+        <div class="loading" id="loading" style="display:none;">
+            <div class="spinner"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Crypto Arbitrage. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const fetchData = async () => {
+                // Simulated fetching data from API
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({
+                            currentBalance: 12345.67,
+                            dailyProfit: 250.00,
+                            totalTrades: 20,
+                            performanceData: {
+                                labels: ['Bot 1', 'Bot 2', 'Bot 3', 'Bot 4', 'Bot 5'],
+                                profits: [200, 150, 300, 180, 220]
+                            },
+                            trades: [
+                                { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance', profit: 2.00, date: '2024-09-01' },
+                                { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase', profit: 3.50, date: '2024-09-02' }
+                            ]
+                        });
+                    }, 1000);
+                });
+            };
+
+            const updateDashboard = async () => {
+                const loading = document.getElementById("loading");
+                loading.style.display = "flex"; // Show loading spinner
+
+                const data = await fetchData();
+
+                loading.style.display = "none"; // Hide loading spinner
+
+                // Update balance, daily profit, and total trades
+                document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
+                document.getElementById("daily-profit").innerText = `$${data.dailyProfit.toFixed(2)}`;
+                document.getElementById("total-trades").innerText = data.totalTrades;
+
+                // Set up the bot performance chart
+                const ctx = document.getElementById('performanceChart').getContext('2d');
+                const performanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.performanceData.labels,
+                        datasets: [{
+                            label: 'Profit',
+                            data: data.performanceData.profits,
+                            backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Update trading history
+                const tradeHistory = document.getElementById("trade-history");
+                tradeHistory.innerHTML = ""; // Clear existing trades
+                data.trades.forEach(trade => {
+                    const tradeRow = document.createElement("div");
+                    tradeRow.className = "trade-row";
+                    tradeRow.innerHTML = `
+                        <div>Trade #${trade.tradeId} on ${trade.date}</div>
+                        <div>Amount: $${trade.amount.toFixed(2)}</div>
+                        <div>Fee: $${trade.fee.toFixed(2)}</div>
+                        <div>Profit: $${trade.profit.toFixed(2)}</div>
+                        <div>Exchange: ${trade.exchange}</div>
+                    `;
+                    tradeHistory.appendChild(tradeRow);
+                });
+            };
+
+            // Initial loading
+            updateDashboard();
+        });
+    </script>
 </body>
 </html>
