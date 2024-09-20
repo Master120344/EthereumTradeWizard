@@ -23,12 +23,45 @@
             <div id="setup-progress">Setup Progress: 0 out of 10</div>
 
             <!-- Bot Setup Sections -->
-            ${Array.from({ length: 10 }, (_, i) => `
-                <div class="bot-setup-section">
-                    <h2>Bot Setup ${i + 1}</h2>
+            <div class="bot-setup-section">
+                <h2>Bot Setup 1</h2>
+                <label for="bot-select-1">Select Bot</label>
+                <select id="bot-select-1">
+                    <option value="">Select a Bot</option>
+                    <option value="Bot1">Bot 1</option>
+                    <option value="Bot2">Bot 2</option>
+                    <option value="Bot3">Bot 3</option>
+                    <option value="Bot4">Bot 4</option>
+                    <option value="Bot5">Bot 5</option>
+                    <option value="Bot6">Bot 6</option>
+                    <option value="Bot7">Bot 7</option>
+                    <option value="Bot8">Bot 8</option>
+                    <option value="Bot9">Bot 9</option>
+                    <option value="Bot10">Bot 10</option>
+                </select>
 
-                    <label for="bot-select-${i}">Select Bot ${i + 1}</label>
-                    <select id="bot-select-${i}" class="bot-select">
+                <label for="api-key-1">API Key</label>
+                <input type="text" id="api-key-1" placeholder="Enter API Key">
+
+                <label for="wallet-address-1">Wallet Address</label>
+                <input type="text" id="wallet-address-1" placeholder="Enter Wallet Address">
+
+                <label for="receiving-wallet-1">Receiving Wallet Address</label>
+                <input type="text" id="receiving-wallet-1" placeholder="Enter Receiving Wallet Address">
+
+                <label for="deposit-address-1">Deposit Address</label>
+                <input type="text" id="deposit-address-1" placeholder="Enter Deposit Address">
+
+                <button type="submit">Send</button>
+                <div id="status-1" class="status-message"></div>
+            </div>
+
+            <!-- Repeat for Bot Setup 2 to 10 -->
+            ${Array.from({ length: 9 }, (_, i) => `
+                <div class="bot-setup-section">
+                    <h2>Bot Setup ${i + 2}</h2>
+                    <label for="bot-select-${i + 2}">Select Bot</label>
+                    <select id="bot-select-${i + 2}">
                         <option value="">Select a Bot</option>
                         <option value="Bot1">Bot 1</option>
                         <option value="Bot2">Bot 2</option>
@@ -42,20 +75,20 @@
                         <option value="Bot10">Bot 10</option>
                     </select>
 
-                    <label for="api-key-${i}">API Key</label>
-                    <input type="text" id="api-key-${i}" placeholder="Enter API Key">
+                    <label for="api-key-${i + 2}">API Key</label>
+                    <input type="text" id="api-key-${i + 2}" placeholder="Enter API Key">
 
-                    <label for="wallet-address-${i}">Wallet Address</label>
-                    <input type="text" id="wallet-address-${i}" placeholder="Enter Wallet Address">
+                    <label for="wallet-address-${i + 2}">Wallet Address</label>
+                    <input type="text" id="wallet-address-${i + 2}" placeholder="Enter Wallet Address">
 
-                    <label for="receiving-wallet-${i}">Receiving Wallet Address</label>
-                    <input type="text" id="receiving-wallet-${i}" placeholder="Enter Receiving Wallet Address">
+                    <label for="receiving-wallet-${i + 2}">Receiving Wallet Address</label>
+                    <input type="text" id="receiving-wallet-${i + 2}" placeholder="Enter Receiving Wallet Address">
 
-                    <label for="deposit-address-${i}">Deposit Address</label>
-                    <input type="text" id="deposit-address-${i}" placeholder="Enter Deposit Address">
+                    <label for="deposit-address-${i + 2}">Deposit Address</label>
+                    <input type="text" id="deposit-address-${i + 2}" placeholder="Enter Deposit Address">
 
                     <button type="submit">Send</button>
-                    <div id="status-${i}" class="status-message"></div>
+                    <div id="status-${i + 2}" class="status-message"></div>
                 </div>
             `).join('')}
         </form>
