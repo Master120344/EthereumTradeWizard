@@ -10,14 +10,14 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: #121212; /* Dark background */
+            color: #f0e68c; /* Yellow text */
             margin: 0;
             line-height: 1.6;
         }
         header {
-            background: #4CAF50;
-            color: #fff;
+            background: #000; /* Black header */
+            color: #f0e68c;
             padding: 20px 0;
             text-align: center;
         }
@@ -32,7 +32,7 @@
             margin: 0 15px;
         }
         nav ul li a {
-            color: white;
+            color: #f0e68c;
             text-decoration: none;
             font-weight: bold;
         }
@@ -44,15 +44,16 @@
         }
         .summary, .graph-section, .profit-info, .bot-status {
             margin: 20px 0;
-            background: #fff;
+            background: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
         h2 {
             margin-bottom: 10px;
             font-size: 1.8em;
             text-align: center;
+            color: #f0e68c;
         }
         .profit-info {
             display: flex;
@@ -71,8 +72,8 @@
         footer {
             text-align: center;
             padding: 15px 0;
-            background: #333;
-            color: #fff;
+            background: #000; /* Black footer */
+            color: #f0e68c;
             position: relative;
             bottom: 0;
             width: 100%;
@@ -86,15 +87,15 @@
             padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
+            color: #f0e68c;
         }
         .status-table th {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #333;
         }
         .footer-note {
             margin-top: 20px;
             font-size: 0.9em;
-            color: #777;
+            color: #ddd;
         }
     </style>
 </head>
@@ -122,8 +123,7 @@
 
         <section class="graph-section">
             <h2>Bot Performance</h2>
-            <canvas id="bot1Chart"></canvas>
-            <canvas id="bot2Chart"></canvas>
+            <canvas id="botCharts"></canvas>
             <p>Charts reset every 24 hours.</p>
         </section>
 
@@ -135,10 +135,11 @@
                         <th>Bot Name</th>
                         <th>Status</th>
                         <th>Last Trade</th>
-                        <th>Profit/Loss</th>
+                        <th>Profit</th>
                     </tr>
                 </thead>
                 <tbody id="bot-status-body">
+                    <!-- Placeholder rows for bots -->
                     <tr>
                         <td>Bot 1</td>
                         <td>Active</td>
@@ -147,27 +148,57 @@
                     </tr>
                     <tr>
                         <td>Bot 2</td>
-                        <td>Inactive</td>
-                        <td>N/A</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Bot 3</td>
-                        <td>Active</td>
-                        <td>10:25 AM</td>
-                        <td>$10.00</td>
-                    </tr>
-                    <tr>
-                        <td>Bot 4</td>
                         <td>Active</td>
                         <td>10:20 AM</td>
                         <td>$20.00</td>
                     </tr>
                     <tr>
-                        <td>Bot 5</td>
+                        <td>Bot 3</td>
                         <td>Active</td>
                         <td>10:15 AM</td>
+                        <td>$10.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 4</td>
+                        <td>Inactive</td>
+                        <td>N/A</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 5</td>
+                        <td>Active</td>
+                        <td>10:10 AM</td>
                         <td>$25.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 6</td>
+                        <td>Active</td>
+                        <td>10:05 AM</td>
+                        <td>$30.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 7</td>
+                        <td>Active</td>
+                        <td>09:55 AM</td>
+                        <td>$18.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 8</td>
+                        <td>Inactive</td>
+                        <td>N/A</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 9</td>
+                        <td>Active</td>
+                        <td>09:50 AM</td>
+                        <td>$22.00</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 10</td>
+                        <td>Active</td>
+                        <td>09:45 AM</td>
+                        <td>$28.00</td>
                     </tr>
                 </tbody>
             </table>
@@ -192,36 +223,30 @@
                 timeInfo.innerText = `Current Time: ${now.toLocaleTimeString('en-US', options)}`;
             };
 
-            const bot1Data = { labels: [], data: [] };
-            const bot2Data = { labels: [], data: [] };
+            const botData = Array.from({ length: 10 }, (_, i) => ({
+                label: `Bot ${i + 1}`,
+                data: Array.from({ length: 12 }, () => Math.random() * 100)
+            }));
 
-            for (let i = 0; i < 10; i++) {
-                const label = `Day ${i + 1}`;
-                bot1Data.labels.push(label);
-                bot2Data.labels.push(label);
-                bot1Data.data.push(Math.random() * 100);
-                bot2Data.data.push(Math.random() * 100);
-            }
-
-            const createChart = (ctx, data, title) => {
+            const createChart = (ctx, data) => {
                 return new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: data.labels,
-                        datasets: [{
-                            label: title,
-                            data: data.data,
+                        labels: Array.from({ length: 12 }, (_, i) => `Hour ${i * 2}`),
+                        datasets: data.map(bot => ({
+                            label: bot.label,
+                            data: bot.data,
                             borderColor: '#4CAF50',
                             backgroundColor: 'rgba(76, 175, 80, 0.2)',
                             borderWidth: 2,
                             fill: true
-                        }]
+                        }))
                     },
                     options: {
                         responsive: true,
                         scales: {
                             x: {
-                                title: { display: true, text: 'Days' }
+                                title: { display: true, text: 'Hours' }
                             },
                             y: {
                                 title: { display: true, text: 'Profit ($)' },
@@ -232,20 +257,19 @@
                 });
             };
 
-            const ctx1 = document.getElementById('bot1Chart').getContext('2d');
-            const ctx2 = document.getElementById('bot2Chart').getContext('2d');
-            createChart(ctx1, bot1Data, 'Bot 1 Daily Profits');
-            createChart(ctx2, bot2Data, 'Bot 2 Daily Profits');
+            const ctx = document.getElementById('botCharts').getContext('2d');
+            createChart(ctx, botData);
 
             const updateDashboard = () => {
-                currentBalance.innerText = `$${(Math.random() * 10000).toFixed(2)}`;
+                currentBalance.innerText = `$${(Math.random * 1000).toFixed(2)}`;
                 dailyProfit.innerText = `$${(Math.random() * 500).toFixed(2)}`;
-                overallProfit.innerText = `$${(Math.random() * 2000).toFixed(2)}`;
+                overallProfit.innerText = `$${(Math.random() * 5000).toFixed(2)}`;
             };
 
             updateTime();
-            setInterval(updateTime, 1000);
-            setInterval(updateDashboard, 5000);
+            setInterval(updateTime, 1000); // Update time every second
+            updateDashboard();
+            setInterval(updateDashboard, 60000); // Update dashboard every minute
         });
     </script>
 </body>
