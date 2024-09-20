@@ -9,10 +9,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 class BinanceBot:
     def __init__(self, symbol, reporting_bot_url, check_interval=5):
         self.api_url = "https://api.binance.com/api/v3/ticker/price"
-        self.best_price = None
         self.symbol = symbol
         self.reporting_bot_url = reporting_bot_url
         self.check_interval = check_interval
+        self.best_price = None
         self.stop_event = Event()
 
     def fetch_price(self):
@@ -22,10 +22,10 @@ class BinanceBot:
             data = response.json()
             return float(data['price'])
         except requests.exceptions.RequestException as e:
-            logging.error(f"Error fetching price: {e}")
+            logging.error(f"Error fetching price for {self.symbol}: {e}")
             return None
 
-    def check_best_price(self):
+    def monitor_prices(self):
         while not self.stop_event.is_set():
             current_price = self.fetch_price()
             if current_price is not None:
@@ -46,11 +46,11 @@ class BinanceBot:
             response.raise_for_status()
             logging.info(f"Reported best price: {self.best_price} for {self.symbol}")
         except requests.exceptions.RequestException as e:
-            logging.error(f"Error reporting price: {e}")
+            logging.error(f"Error reporting price for {self.symbol}: {e}")
 
     def start(self):
         logging.info(f"Starting BinanceBot for {self.symbol}")
-        self.thread = Thread(target=self.check_best_price)
+        self.thread = Thread(target=self.monitor_prices)
         self.thread.start()
 
     def stop(self):
