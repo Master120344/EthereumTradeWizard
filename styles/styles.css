@@ -68,6 +68,7 @@ h2 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* Card item styles */
 .card-item {
     text-align: center;
 }
@@ -176,6 +177,21 @@ canvas {
     height: 400px;
 }
 
+/* Button styles */
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .spinner {
@@ -189,5 +205,11 @@ canvas {
 
     canvas {
         height: 300px;
+    }
+
+    /* Adjust card styles for mobile */
+    .card {
+        flex-direction: column;
+        align-items: center;
     }
 }
