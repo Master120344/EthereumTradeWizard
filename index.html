@@ -202,6 +202,7 @@
         <section class="graph-section">
             <h2>Trading Volume Over Time</h2>
             <canvas id="volumeChart"></canvas>
+            <button id="refreshButton">Refresh Data</button>
         </section>
 
         <section class="active-bots">
@@ -253,7 +254,11 @@
                                 { tradeId: 1, amount: 100.00, fee: 1.00, exchange: 'Binance' },
                                 { tradeId: 2, amount: 150.00, fee: 1.50, exchange: 'Coinbase' },
                                 { tradeId: 3, amount: 200.00, fee: 2.00, exchange: 'Kraken' }
-                            ]
+                            ],
+                            volumeData: {
+                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                values: [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600] // Example data
+                            }
                         });
                     }, 1000);
                 });
@@ -269,7 +274,8 @@
 
                 // Update balance, profit, and total trades
                 document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
-                document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
+                document.getElementById("total-profit").innerText = `$${data
+document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
                 document.getElementById("total-trades").innerText = data.totalTrades;
 
                 // Update bot information
@@ -277,8 +283,7 @@
                 botList.innerHTML = ""; // Clear existing bots
                 data.bots.forEach(bot => {
                     const botCard = document.createElement("div");
-                    botCard.class
-botCard.className = "bot-card";
+                    botCard.className = "bot-card";
                     botCard.innerHTML = `
                         <h3>${bot.name}</h3>
                         <p>Status: <span class="status ${bot.status.toLowerCase()}">${bot.status}</span></p>
@@ -304,13 +309,13 @@ botCard.className = "bot-card";
 
                 // Set up the trading volume chart
                 const ctx = document.getElementById('volumeChart').getContext('2d');
-                new Chart(ctx, {
+                const volumeChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        labels: data.volumeData.labels,
                         datasets: [{
                             label: 'Trading Volume',
-                            data: [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600], // Example data
+                            data: data.volumeData.values,
                             borderColor: '#3498db',
                             backgroundColor: 'rgba(52, 152, 219, 0.2)',
                             borderWidth: 2,
@@ -334,6 +339,11 @@ botCard.className = "bot-card";
 
             // Initial loading
             updateDashboard();
+
+            // Refresh data on button click
+            document.getElementById('refreshButton').addEventListener('click', () => {
+                updateDashboard();
+            });
         });
     </script>
 </body>
