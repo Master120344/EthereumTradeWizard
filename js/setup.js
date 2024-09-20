@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById('bot-setup-form');
-    const botSelect = document.getElementById('bot-select');
+    const form = document.getElementById('botSetupForm');
+    const botSelect = document.getElementById('exchange');
     const usedBotList = document.getElementById('used-bot-list');
-    
+
     const usedBots = new Set();
 
     form.addEventListener('submit', (e) => {
@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const exchange = form.elements['exchange'].value.trim();
-        const apiKey = form.elements['api-key'].value.trim();
-        const walletAddress = form.elements['wallet-address'].value.trim();
+        const apiKey = form.elements['apiKey'].value.trim();
+        const walletAddress = form.elements['walletAddress'].value.trim();
 
         if (!exchange || !apiKey || !walletAddress) {
             alert('Please fill in all required fields.');
@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Optional fields check
-        const apiSecret = form.elements['api-secret'].value.trim();
-        const seedPhrase = form.elements['seed-phrase'].value.trim();
+        const apiSecret = form.elements['apiSecret'] ? form.elements['apiSecret'].value.trim() : '';
+        const seedPhrase = form.elements['seedPhrase'] ? form.elements['seedPhrase'].value.trim() : '';
 
         // Create a list item for the used bot
         const listItem = document.createElement('li');
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Additional features for user feedback
     botSelect.addEventListener('change', () => {
         const selectedBot = botSelect.value;
-        if (selectedBots.has(selectedBot)) {
+        if (usedBots.has(selectedBot)) {
             alert(`${selectedBot} has already been selected.`);
         }
     });
