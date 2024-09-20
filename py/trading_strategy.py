@@ -2,8 +2,10 @@
 
 import asyncio
 import logging
+import json
 import numpy as np
 from typing import List, Dict, Any, Optional
+import websockets
 from config import TRADING_PAIRS, ARBITRAGE_PARAMS
 from order_manager import OrderManager
 
@@ -67,8 +69,18 @@ class TradingStrategy:
 
         self.active_trades[pair] = True
         try:
-            buy_orders = [self.order_manager.place_order(exchange, pair, amount, buy_price, 'BUY') for exchange in self.order_manager.exchanges if buy_price in await self._fetch_prices_for_pair(pair).values()]
-            sell_orders = [self.order_manager.place_order(exchange, pair, amount, sell_price, 'SELL') for exchange in self.order_manager.exchanges if sell_price in await self._fetch_prices_for_pair(pair).values()]
+            # Fetch updated prices before placing orders
+            latest_prices = await self._fetch_prices_for_pair(pair)
+            buy_orders = [
+                self.order_manager.place_order(exchange, pair, amount, buy_price, 'BUY')
+                for exchange in self.order_manager.exchanges
+                if buy_price in latest_prices.get(exchange, [])
+            ]
+            sell_orders = [
+                self.order_manager.place_order(exchange, pair, amount, sell_price, 'SELL')
+                for exchange in self.order_manager.exchanges
+                if sell_price in latest_prices.get(exchange, [])
+            ]
 
             # Execute all buy orders
             buy_results = await asyncio.gather(*buy_orders)
@@ -81,6 +93,8 @@ class TradingStrategy:
             for result in sell_results:
                 if result.get('orderId'):
                     logging.info(f"Sell order placed successfully: {result}")
+        except Exception as e:
+            logging.error(f"Error executing trades for {pair}: {e}")
         finally:
             del self.active_trades[pair]
 
