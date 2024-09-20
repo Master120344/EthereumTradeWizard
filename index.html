@@ -27,6 +27,21 @@
             text-align: center;
             position: relative;
         }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
         .container {
             width: 90%;
             max-width: 1200px;
@@ -132,6 +147,12 @@
 <body>
     <header>
         <h1>Crypto Arbitrage Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="setup.html">Setup</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main class="container">
@@ -216,7 +237,7 @@
                         });
                     }, 1000);
                 });
-            };
+});
 
             const updateDashboard = async () => {
                 const loading = document.getElementById("loading");
@@ -229,8 +250,6 @@
                 // Update balance, profit, and total trades
                 document.getElementById("current-balance").innerText = `$${data.currentBalance.toFixed(2)}`;
                 document.getElementById("total-profit").innerText = `$${data.totalProfit.toFixed(2)}`;
-                document.getElementById("total-trades").innerText = data
-// Update total trades
                 document.getElementById("total-trades").innerText = data.totalTrades;
 
                 // Update bot information
